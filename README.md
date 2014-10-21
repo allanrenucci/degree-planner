@@ -1,4 +1,6 @@
-team30
-======
 
-15-437/15-637 repo for tman
+degree-planner
+==============
+
+Django WebApplication which helps manage degrees and planned courseworks.
+
