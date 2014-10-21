@@ -1,0 +1,36 @@
+<div id="constraintCreator" class="col-md-4 fullHeight">
+	<form id="accordionContainer" role="form" method="post" action="{% url 'create' school program %}">
+		<div class="centeredText">
+			<label for="constraintName">Group Name:</label>
+			<input type="text" id="constraintName" name="name" class="" maxlength="20">
+		</div>
+		<div id="accordionMaxSize">
+			<div id="accordion">
+				{% for faculty,faculty_classes in classes.items %}
+					<h3 class="accordionHeader btn btn-default btn-block blackButton thinBlackBtn">{{ faculty }}</h3>	
+					<ul class="accordionContentContainer">
+					{% for class in faculty_classes %}
+						<li class="accordionContent">
+							<input type="checkbox" name="classes" id="class_{{ class.id }}" class="checkboxInput" value="{{ class.id }}">
+							<label for="class_{{ class.id }}">{{ class }}</label>
+						</li>
+					{% endfor %}
+					</ul>
+				{% endfor %}
+				{% csrf_token %}
+			</div>
+		</div>
+		<br>
+		<div class="centeredText">
+			<label for="minimum_classes">
+				Must take at least <input id="minimum_classes" class="smallNumInput" 
+				name="minimum_classes" type="text" pattern="[0-9]*" default="0" value="0"> of these
+				( <input type="checkbox" name="all_mandatory" id="all_mandatory">All mandatory )
+			</label>
+		</div>
+		<input type="hidden" name="pickedSchool" value="{{ school }}">
+		<input type="hidden" name="createConstraint">
+		<input type="hidden" name="programName" value="{{ program }}">
+		<button id="submitSchoolChoice" type="submit" class="btn btn-default btn-block blackButton">Create Group</button>
+	</form>
+</div>

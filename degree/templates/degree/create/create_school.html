@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+	<style>
+		input, select {
+			width: 300px;
+			margin: 5px 0px;
+		}
+		.pseudoLinks {
+			color: rgb(100,100,255);
+			cursor: pointer;
+		}
+		.blackButton {
+ 			background-color: rgba(0,0,0,0.8);
+  			color: #bbbbbb;
+		}
+		#formWithNewSchool {
+			display: none;
+		}
+		#nextPage {
+			display: none;
+		}
+	</style>
+{% endblock stylesheet %}
+
+{% block left_content %}
+
+<div id="schoolCreationContainer">
+	<form id="formWithOldSchool" action="{% url 'existing school' %}" method="POST" role="form">
+		
+		<div class="form-group" id="schoolChooser">
+			<label for="schoolSelector">Your School: </label>
+			<select class="form-control" name="name" id="schoolSelector">
+				{% for school in schools %}
+					<option value="{{ school.name }}">{{ school.name }}</option>
+				{% endfor %}
+			</select>
+			<span id="noSchool" class="pseudoLinks">My school's not here</span>
+		</div>
+
+		<div class="form-group" id="newProgramInput">
+			<label for="newSchool">Your Program: </label>
+			<input type="text" class="form-control" required id="programName2" name="programName" placeholder="e.g. Computer Science" pattern="[^/]+">
+		</div>	
+
+		<div class="form-group" id="programChooser">
+			<div id="programChooserAjax">
+
+			</div>
+		</div>
+
+		<button id="submitSchoolChoice" type="submit" class="btn btn-default btn-block blackButton">Build Program</button>
+		{% csrf_token %}
+
+	</form>
+
+	<form id="formWithNewSchool" action="{% url 'create school' %}" method="POST" role="form">
+
+		<div class="form-group" id="newSchoolInput">
+			<label for="newSchool">New School: </label>
+			<input type="text" class="form-control" id="newSchool" name="name" placeholder="e.g. Carnegie Mellon University" pattern="[^/]+">
+			<span id="backToList" class="pseudoLinks">Back to the list</a>
+		</div>
+		
+		<div class="form-group" id="newProgramInput">
+			<label for="newSchool">Your Program: </label>
+			<input type="text" class="form-control" required id="programName" name="programName" placeholder="e.g. Computer Science" pattern="[^/]+">
+		</div>	
+
+		<button id="submitSchoolChoice" type="submit" class="btn btn-default btn-block blackButton">Build Program</button>
+		{% csrf_token %}
+
+	</form>
+</div>
+
+{% endblock left_content %}
+
+{% block my_script %}
+<script>
+
+	var programState = "new"
+	
+	$("#noSchool").on('click', function() {
+		$('#formWithOldSchool').css('display', 'none');
+		$('#formWithNewSchool').css('display', 'block');
+	});
+
+	$("#backToList").on('click', function() {
+		$('#formWithOldSchool').css('display', 'block');
+		$('#formWithNewSchool').css('display', 'none');
+	});
+
+	$("#schoolSelector").on('change', function() {
+		var school = $(this).val()
+		if (school == null) return
+		$.get(school.toString() + '/get_public', function(response) {
+			$("#programChooserAjax").html(response);
+		})
+	});
+
+	$("#schoolSelector").trigger('change');
+
+	setupForm('#formWithOldSchool', '#programName2');
+	setupForm('#formWithNewSchool', '#programName');
+
+	function setupForm(form, pop) {
+		$(form).submit(function() {
+			$(this).ajaxSubmit(function(response) {
+				if (response == "programName") {
+					$(pop).popover({
+						html: 'true',
+						placement: 'auto',
+						content: 'Program name already in use'
+					}).popover('show');
+					
+					$(pop).on('click', function() {
+						$(pop).popover('destroy');
+					});
+				} else {
+					window.location = response
+				}
+			});
+			return false;
+		});
+	}
+
+</script>
+{% endblock my_script %}

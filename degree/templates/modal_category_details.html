@@ -1,0 +1,44 @@
+<div id="modal_category_details{{ category.id }}" class="modal constraint_details_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+	           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 class="modal-title">{{ category.name }}</h3>
+        </div>
+        <div class="modal-body">
+			<p>{{ category.description }}</p>
+			<p class="">Requires at least <span class="bolded">{{ category.minimum_credits }}</span> credits and <span class="bolded">{{ category.minimum_classes }}</span> classes</p>
+			<br>
+				
+			<h4 class="underlined allowedInformation">Allowed classes</h4>
+			<ul>
+				{% for class in category.allowedClasses %}
+					<li>{{ class }}</li>
+				{% endfor %}
+			</ul>
+
+			<br>
+
+			<h4 class="underlined mandatoryInformation">Mandatory classes</h4>
+			<ul>
+				{% for constraint in category.constraints.all %}
+					{% if constraint.minimum_classes > 0 %}	
+						<p class="bolded">At least {{ constraint.minimum_classes }} of these:</p>
+							{% for class in constraint.classes.all %}
+								<li>{{ class }}</li>
+							{% endfor %}
+							<br>
+					{% endif %}
+				{% endfor %}
+			</ul>
+			<br>
+			<h4 class="underlined">Requires at least <span class="bolded">{{ category.minimum_inner_categories }}</span> of these categories:</h4>
+			{% for cat in category.inner_categories.all %}
+				<div href="#modal_category_details{{ cat.id }}" data-toggle="modal" data-dismiss="modal" id="" 
+				class="categoryModalLauncher halfWidth">{{ cat }}</div>
+			{% endfor %}
+			<hr>
+        </div>
+      </div>
+    </div>
+</div>

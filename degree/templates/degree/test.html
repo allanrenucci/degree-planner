@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<form class="form-horizontal" role="form" action="#">
+  <div class="form-group has-error">
+  	<div class="col-sm-2">
+  	  <label for="input_id" class="control-label">Input</label>
+  	</div>
+  	<div class="col-sm-4">
+  	  <input id="input_id" required type="text" class="form-control">
+  	</div>
+  </div>
+</form>
+
+{% include 'popover_snippet.html' with elem_id='input_id' placement='bottom' title='Hello Tal' content='<div class="has-error"><p class="help-block">Something is wrong<p></div>' %}
+
+{% endblock main_content %}

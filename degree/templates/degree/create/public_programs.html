@@ -1,0 +1,7 @@
+	<label for="schoolSelector">Based on Existing template: </label>
+	<select class="form-control" name="publicProgram" id="programSelector">
+		<option value="-1">None</option>
+		{% for program in public %}
+			<option value="{{ program.id }}">{{ program }} (by {{ program.author }})</option>
+		{% endfor %}
+	</select>

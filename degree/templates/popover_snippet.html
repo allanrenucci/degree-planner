@@ -1,0 +1,27 @@
+{% comment %}
+
+  A reusable popover template.
+  
+  elem_id       The id of the element to append the popover.
+  placement		top | bottom | left | right | auto. Default is auto 
+  title         The title of the popover (optional).
+  content       The content of the popover.
+
+{% endcomment %}
+
+<script>
+	$(document).ready(function() {
+		var $pop = $('#{{ elem_id }}');
+
+		$pop.popover({
+			html: 'true',
+			placement: {% if  placement %}'{{ placement }}'{% else %}'auto'{% endif %},
+			{% if title %}title: '{{ title }}',{% endif %}
+			content: '{{ content|escapejs }}',
+		}).popover('show');
+
+		$pop.click(function() {
+			$pop.popover('destroy');
+		});
+	});
+</script>

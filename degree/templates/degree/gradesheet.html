@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+ 
+{% block stylesheet %}
+
+<style>
+	.myTable {
+		text-align: center;
+		margin: 0 auto;
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 4px;
+	}
+	.myTable th {
+		cursor: pointer;
+		text-align: center;
+		background-color: rgba(0,0,170,0.3);
+		border: solid black 2px;
+		height: 40px;
+		border-radius: 5px;
+	}
+	.myTable th:hover {
+		background-color: rgba(0,0,170,0.5);
+	}
+	.myTable td {
+		text-align: center;
+		border: solid black 2px;
+		padding: 10px;
+		color: black;
+	}
+	.myTable tr:nth-of-type(2n) {
+		background-color: rgba(0,0,250,0.1);
+	}
+	.gradesheetDetails {
+		border-radius: 20px;
+		background-color: rgba(0,120,0,0.3);
+	}
+	.tableContainer {
+		overflow-y: auto;
+	}
+	.invisTable {
+		margin: 0 auto;
+	}
+	.invisTable td {
+		padding: 5px;
+	}
+	#generatedLink {
+		cursor: text;
+		text-align: center;
+		background-color: inherit !important;
+		border: solid black 1px !important;
+	}
+	.infoContainer {
+		height: 75%;
+	}
+	#generateLinkContainer {
+		width: 95%;
+		margin: 0 auto;
+	}
+</style>
+
+{% endblock stylesheet %}
+
+{% block main_content %}
+
+<div class="col-md-4 fullHeight gradesheetDetails">
+	<div class="infoContainer">
+		<h3 class="centeredText bolded">Program Information</h3>
+		<br>
+		<table class="invisTable">
+			<tr>
+				<td><i>Program:</i></td>
+				<td><b>{{ program }}</b></td>
+			</tr>
+			
+			<tr>
+				<td><i>School:</i></td>
+				<td><b>{{ school }}</b></td>
+			</tr>
+	
+			<tr>
+				<td><i>For:</i></td>
+				<td>
+					<b>
+						{% if author.first_name and author.last_name %} 
+							{{ author.first_name }} {{ author.last_name }} 
+						{% else %} 
+							{{ author }} 
+						{% endif %}
+					</b>
+				</td>
+			</tr>
+	
+			<tr>
+				<td><i>Credits completed:</i></td>
+				<td><b>{{ credits }}</b></td>
+			</tr>
+	
+			<tr>
+				<td><i>Classes completed:</i></td>
+				<td><b>{{ classes }}</b></td>
+			</tr>
+	
+			<tr>
+				<td><i>Grade average:</i></td>
+				<td><b>{{ average | floatformat:3  }}</b></td>
+			</tr>
+		</table>
+	</div>
+
+	{% if gradesheet %}
+	<div id="generateLinkContainer" class="centeredText">
+		<label class="" for="">Share your grades</label>
+		<input id="generatedLink" class="form-control" type="text" readonly value="{{ gradesheet }}">
+		<button class="btn btn-default btn-block blackButton" id="regenerate">Generate New Link</button>
+	</div>
+	{% endif %}
+	
+</div>
+
+<div class="col-md-8 fullHeight tableContainer">
+
+	<table class="myTable" data-sortable>
+	    <thead>
+			<th title="Sort by faculty">Faculty</th>
+			<th title="Sort by credits">Credits</th>
+			<th title="Sort by number">Number</th>
+			<th title="Sort by name">Name</th>
+			<th title="Sort by grade">Grade</th>
+	    </thead>
+	    <tbody>
+	    	{% for taken in taken_classes %}
+	        <tr>
+	            <td>{{ taken.taken_class.faculty }}</td>
+	            <td>{{ taken.taken_class.credits }}</td>
+	            <td>{{ taken.taken_class.number }}</td>
+	           	<td>{{ taken.taken_class.name }}</td>
+	            <td><b>{{ taken.grade }}</b></td>
+	        </tr>
+	        {% endfor %}
+	    </tbody>
+	</table>
+	
+</div>
+
+
+{% endblock main_content %}
+
+{% block my_script %}
+<script src="{% static 'degree/js/sortable-0.6.0/sortable-0.6.0/js/sortable.min.js' %}"></script>
+<script>
+
+$("#regenerate").on('click', function() {
+	$.get('{% url "regenerate" school program %}', function(response) {
+		$('#generatedLink').val(response);
+	});
+});
+
+</script>
+{% endblock my_script %}

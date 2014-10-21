@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block stylesheet %}
+	<style>
+		.20lineHeight {
+			line-height: 20px;
+		}
+	</style>
+{% endblock stylesheet %}
+
+{% block main_content %}
+
+<div class="col-md-3 fullHeight leftSidecContainer">
+	<div class="borderedContainer">
+		<div class="form-group">
+			<label for="schoolSelector">Your School: </label>
+			<h4 class="bolded">{{ school }}</h4>
+		</div>
+		<br>
+		<div class="form-group">
+			<label>Program Name: </label>
+			<h4 class="bolded">{{ program }}</h4>
+		</div>
+	</div>
+	<br>
+	
+	<input href="#modal-dialog-faculty" data-toggle="modal" id="launchFaculty" type="button" 
+		class="btn btn-default btn-block blackButton" value="Create New Faculty">
+	<input href="#modal-dialog-class" data-toggle="modal" id="launchClass" type="button" 
+		class="btn btn-default btn-block blackButton" value="Create New Class">
+	<br>	
+	<label class="centeredText width100">Categories</label>
+	<ul class="categoryList centeredText">
+		{% for category in categories %}
+			{% include 'modal_category_details.html' with category=category %}
+			<div class="categoryModalLauncher">
+				<div href="#modal_category_details{{ category.id }}" data-toggle="modal" class="categoryText">{{ category }}</div>
+				<a class="roundedButton" href="{% url 'remove category' school program category.id %}">&times;</a>	
+			</div>
+		{% endfor %}
+	</ul>
+	<a href="{% url 'assign categories' school program %}" class="btn btn-default btn-block blackButton bigButton">Done creating categories</a>
+</div>
+
+<form class="form-signin col-md-5 fullHeight" role="form" method="post" action="{% url 'create category' school program %}">
+	<div class="categoryConstraintContainer fullHeight">
+		<h3>Create Category</h3>
+		<div class="col-md-7 categoryContainer">
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input type="text" name="name" id="cat_form_name" required class="form-control">
+				{% if cat_form.name.errors %}
+					{% include "popover_snippet.html" with elem_id="cat_form_name" content=cat_form.name.errors %}
+				{% endif %}
+			</div>
+			
+			<div class="form-group">
+				<label for="name">Description</label>
+				<textarea name="description" id="" cols="30" rows="2" class="form-control" placeholder="This category stands for ..."></textarea>
+			</div>
+
+			<div class="form-inline form-group">
+				<label for="minimum_credits">At least
+					<input type="text" pattern="[0-9]*\.?[0-9]*" required name="minimum_credits" id="" value="0" class="form-control smallNumInputFormControl">
+					credits
+				</label>
+				<label for="minimum_classes"> &amp; 
+					<input type="text" pattern="[0-9]*" required name="minimum_classes" value="0" id="" class="form-control smallNumInputFormControl">
+					classes
+				</label>
+			</div>
+
+			<div class="form-group">
+				<label for="name">Inner categories</label>
+				<ul class="innerCategoryContainer form-control">
+					{% for category in categories %}
+						<li>
+							<input type="checkbox" name="inner_categories" id="category_{{ category.id }}" class="" value="{{ category.id }}">
+							<label for="category_{{ category.id }}">{{ category }}</label>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+
+			<div class="form-inline form-group">
+				<label for="minimum_classes"> At least
+					<input type="text" pattern="[0-9]*" required name="minimum_inner_categories" value="0" id="" class="form-control smallNumInputFormControl">
+					of them are mandatory
+				</label>
+			</div>
+
+		</div>
+	
+		<div class="col-md-5 constraintsContainer noSidePadding">
+			<label for="">Groups</label>
+			<ul class="constraintsCategoryList noSidePadding">
+				{% for constraint in constraints %}
+					{% include 'modal_constraint_details.html' with constraint=constraint %}
+					<div class="constraintModalContainer">
+						<div href="#modal_constraint_details{{ constraint.id }}" data-toggle="modal" id="" class="constraintModalLauncher">
+							{{ constraint }}
+						</div>
+						<input class="invisCheckbox" type="checkbox" id="checkbox_{{constraint.id}}" name="constraints" value="{{ constraint.id }}">
+						<a class="roundedButton 20lineHeight plusminusButton" box="checkbox_{{constraint.id}}">&plusmn;</a>		
+						<a class="roundedButton 20lineHeight" href="{% url 'remove group' school program constraint.id %}">&times;</a>		
+					</div>
+				{% endfor %}
+			</ul>
+		</div>
+		<button id="" type="submit" class="btn btn-default btn-block blackButton">Add Category</button>
+		{% csrf_token %}
+	</div>
+</form>
+
+<div id="constraintCreator" class="col-md-4 fullHeight">
+	<form id="accordionContainer" role="form" method="post" action="{% url 'create group' school program %}">
+		<div class="centeredText form-inline">
+			<label for="constraintName">Group Name:</label>
+			<input type="text" id="constraintName" required name="name" class="form-control" maxlength="20">
+			{% if constraint_form.name.errors %}
+				{% include "popover_snippet.html" with elem_id="constraintName" content=constraint_form.name.errors placement="bottom" %}
+			{% endif %}
+		</div>
+		<div id="accordionMaxSize">
+			<div id="accordion">
+				{% for faculty,faculty_classes in classes.items %}
+					<h3 class="accordionHeader btn btn-default btn-block blackButton thinBlackBtn">{{ faculty }}</h3>	
+					<ul class="accordionContentContainer">
+						<li class="accordionContent">
+							<label for="faculty{{faculty.id}}">
+								<input type="checkbox" name="" id="faculty{{faculty.id}}" class="facultyCheckbox" faculty="class{{ faculty.id }}" value="">
+								<i>All {{ faculty }}</i>
+							</label>
+						</li>
+					{% for class in faculty_classes %}
+						<li class="accordionContent">
+							<label for="class_{{ class.id }}">
+								<input type="checkbox" name="classes" id="class_{{ class.id }}" class="checkboxInput class{{ faculty.id }}" value="{{ class.id }}">
+								{{ class }}
+							</label>
+						</li>
+					{% endfor %}
+					</ul>
+				{% endfor %}
+				{% csrf_token %}
+			</div>
+		</div>
+		<br>
+		<div class="centeredText">
+			<label for="minimum_classes">
+				Must take at least <input id="minimum_classes" required class="smallNumInput" 
+				name="minimum_classes" type="text" pattern="[0-9]*" default="0" value="0"> of these
+				( <input type="checkbox" name="all_mandatory" id="all_mandatory">All mandatory )
+			</label>
+		</div>
+		<button id="submitSchoolChoice" type="submit" class="btn btn-default btn-block blackButton">Create Group</button>
+	</form>
+</div>
+
+	<!-- ************************************
+						
+						MODALS
+
+	************************************** -->
+
+	<div class="modal" id="modal-dialog-faculty">
+		<div class="modal-dialog">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h3 class="modal-title">Create New Faculty</h3>
+	        </div>
+	        <div class="modal-body">
+						<form method="post" action="{% url 'create faculty' school program %}">
+						{% include "form_snippet.html" with form=fac_form %}
+						{% csrf_token %}
+						<button type="submit" class="btn btn-default btn-block blackButton">Create</button>
+						</form>
+	        </div>
+	      </div>
+	    </div>
+	</div>
+	{% if fac_form.errors %}
+	<script>$('#modal-dialog-faculty').modal('toggle')</script>
+	{% endif %}
+
+	<div class="modal" id="modal-dialog-class">
+		<div class="modal-dialog">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h3 class="modal-title">Create New Class</h3>
+	        </div>
+	        <div class="modal-body">
+						<form method="post" action="{% url 'create class' school program %}">
+						{% include "form_snippet.html" with form=class_form %}
+						{% csrf_token %}
+						<button type="submit" class="btn btn-default btn-block blackButton">Create</button>
+						</form>
+	        </div>
+	      </div>
+	    </div>
+	</div>
+	{% if class_form.errors %}
+	<script>$('#modal-dialog-class').modal('toggle')</script>
+	{% endif %}
+
+	<!-- ************************************
+						
+					END MODALS
+
+	************************************** -->
+
+{% endblock main_content %}
+
+{% block my_script %}
+
+<script>
+
+$(window).load(function() {
+	$("#accordion").accordion({
+        heightStyle: "fill",
+        autoHeight: false,
+    	clearStyle: true,   
+    });
+
+});
+
+$("#all_mandatory").on('change', function(){
+    if($(this).is(':checked')){
+    	amountChecked = $('.checkboxInput:checked').size()
+    	$("#minimum_classes")
+    		.attr('value', amountChecked)
+    		.val(amountChecked)
+    		.attr("readonly","")
+    		.css("background-color","inherit");
+
+        $('.checkboxInput').on('change', function() {
+        	amountChecked = $('.checkboxInput:checked').size()
+        	$("#minimum_classes").attr('value', amountChecked).val(amountChecked);
+        });
+    } else {
+        $("#minimum_classes").removeAttr("readonly").css("background-color", "white")
+        $('.checkboxInput').unbind('change')
+    }
+});
+
+$(".invisCheckbox").on('change', function(){
+    if($(this).is(':checked')) {
+    	$(this).parent().css("background-color", "rgba(0,200,30,0.3)");
+    } else {
+		$(this).parent().css("background-color", "rgba(200,200,30,0.3)")
+    }
+});
+
+$('.plusminusButton').on('click', function() {
+	var selector = '#' + $(this).attr("box");
+	$(selector).prop('checked')
+	$(selector).trigger('click');
+});
+
+$('.facultyCheckbox').on('change', function() {
+	if($(this).is(':checked')) {
+		$('.' + $(this).attr('faculty')).prop('checked', true).trigger('change');
+    } else {
+		$('.' + $(this).attr('faculty')).prop('checked', false).trigger('change');
+    }
+});
+
+</script>
+
+{% endblock my_script %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block stylesheet %}
+<style>
+	
+	.70height {
+		height: 70%;
+		border: ;
+	}
+
+	#authorsCredits {
+		background-color: rgba(140,80,200,0.3);
+		border-radius: 50px;
+		height: 8.5em;
+		padding: 2em;
+		text-align: center;
+		border: solid black 3px;
+		position: absolute;
+		bottom: 2%;
+		right: 2%;
+	}
+
+	#readme {
+		background-color: rgba(140,80,200,0.3);
+		border-radius: 50px;
+		border: solid black 3px;
+		padding: 25px;
+		height: 98%;
+	}
+	.readmeList {
+		list-style-type: disc !important;
+		list-style-position: outside !important;
+		margin-left: 15px;
+	}
+	.readmeList li {
+		margin-bottom: 5px;
+	}
+
+</style>
+{% endblock stylesheet %}
+
+{% block main_content %}
+
+<div class="col-md-3" id="readme">
+	<p><i>Degree Planner is an application that allows a student to plan his coursework from a degree-wide perspective of filling all the requisites of the school and the program</i></p>
+
+	<p><u><b>Degree Planner allows the user to:</b></u></p>
+	<ul class="readmeList">
+		<li>Create new schools, programs, faculties and classes.</li>
+		<li>Arrange the class requirements into class groups and categories in a very flexible way.</li>
+		<li>Decide which classes to take with instant feedback on the impact towards the filling of requirements.</li>
+		<li>Share all that was created with other users from the same school for easier future builds.</li>
+		<li>Add grades for completed classes and produce shareable and styled gradesheets.</li>
+	</ul>
+</div>
+<div class="col-md-6">
+	
+</div>
+<div class="col-md-3 fullHeight">
+	<div class="70height">
+		
+	</div>
+	<div id="authorsCredits">
+		By <b>Tal Man</b> and <b>Allan Renucci</b> <br>	
+		15-437 Web-App Development <br>
+		Carnegie Mellon University
+	</div>
+</div>
+
+{% endblock main_content %}

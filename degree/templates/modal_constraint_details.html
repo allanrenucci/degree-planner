@@ -1,0 +1,20 @@
+	
+	<div id="modal_constraint_details{{ constraint.id }}" class="modal constraint_details_modal">
+	    <div class="modal-dialog">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h3 class="modal-title">{{ constraint.name }}</h3>
+	        </div>
+	        <div class="modal-body">
+				<h4>{% if constraint.minimum_classes > 0 %} At least {{ constraint.minimum_classes }} of the following: {% else %} Allowed Classes {% endif %}</h4>
+				<ul>
+					{% for class in constraint.classes.all %}
+						<li>{{ class }}</li>
+					{% endfor %}
+					<hr>
+				</ul>
+	        </div>
+	      </div>
+	    </div>
+	</div>

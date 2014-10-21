@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+<h1 class="page-header">Register</h1>
+
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endfor %}
+
+<form class="form-horizontal" method="post" action="{% url 'register' %}">
+  {% include "form_snippet.html" with form=form form_style='horizontal' %}
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default blackButton">Register</button>
+    </div>
+  </div>
+{% csrf_token %}
+</form>
+	
+{% endblock main_content %}

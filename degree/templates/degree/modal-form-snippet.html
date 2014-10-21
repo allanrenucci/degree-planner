@@ -1,0 +1,38 @@
+{% comment %}
+
+modal_id = the id by which the modal is called
+form_action = the action for the form
+form = the django form to use
+hidden_name = the hidden form name to use
+button_text = the button text
+
+{% endcomment %}
+
+<div id="{% modal_id %}" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+            <a href="#" data-dismiss="modal" aria-hidden="true" class="close">×</a>
+        </div>
+        <div class="modal-body">
+			<form class="form-signin" role="form" method="post" action="{% form_action %}">
+				{% for field in {% form %}.visible_fields %}
+					<div class="form-group">
+						{{ field.errors }} 
+						{{ field.label_tag }} <br>
+						{{ field|add_class:"form-control" }}
+					</div>
+				{% endfor %}
+				{% for field in {% form %}.hidden_fields %}
+				    {{ field }}
+				{% endfor %}
+				{% csrf_token %}
+				<input type="hidden" name="pickedSchool" value="{{ school }}">
+				<input type="hidden" name="{% hidden_name %}">
+				<input type="hidden" name="programName" value="{{ program }}">
+				<button id="" type="submit" class="btn btn-default btn-block blackButton">{% button_text %}</button>
+			</form>
+        </div>
+      </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+{% comment %}
+
+  A reusable form template.
+  
+  form        The form object.
+  form_style  horizontal, basic (Default).
+
+{% endcomment %}
+
+{% load widget_tweaks %}
+
+{% ifequal form_style "horizontal" %}
+
+{% for field in form.visible_fields %}
+<div class="form-group">
+  <div class="col-sm-2">
+    <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+  </div>
+  <div class="col-sm-4">
+  {{ field|add_class:"form-control" }}
+  </div>
+
+  {% if field.errors %}
+  <div class="col-sm-6 has-error">
+    <ul>
+    {% for error in field.errors %}
+      <li class="help-block">{{ error }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+
+{% else %}
+
+{% for field in form.visible_fields %}
+<div class="form-group">
+  <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+  {{ field|add_class:"form-control" }}
+  {% if field.errors %}
+  <div class="has-error">
+    <ul>
+    {% for error in field.errors %}
+      <li class="help-block">{{ error }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+  
+{% endifequal %}
+
+{% for hidden in form.hidden_fields %}
+  {{ hidden }}
+{% endfor %}
